@@ -1,0 +1,110 @@
+.showImagePost{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    height: auto;
+    border: 1px dashed rgb(90, 86, 86);
+    
+    .showImagePostCreator{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        gap: 20px;
+        border-bottom: 1px solid rgb(74, 74, 73);
+
+        .userShowLeftPanel{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            span{
+                font-family: cursive;
+            }
+        }
+        .userShowRightPanel{
+            .icon{
+                font-size: 1.1rem;
+                cursor: pointer;
+            }
+        }
+        
+    }
+
+    .showImagePostImage{
+        width: 100%;
+        height: 300px;
+        padding: 10px;
+
+        img{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+    }
+    .showImagePostDetails{
+        padding: 10px;
+        font-family: cursive;
+        h4{
+            font-size: .8rem;
+        }
+        p{
+            margin-top: 4px;
+            font-size: .7rem;
+        }
+    }
+    .showImagePostIcon{
+        padding: 10px;
+    
+        border-top: 1px solid rgb(74, 74, 73);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+ 
+
+        .showImagePostIconLeftPanel{
+
+            flex:3;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            .icon{
+                font-size: 1.1rem;
+                cursor: pointer;
+
+            }
+
+            .likes{
+                display: flex;
+                align-items: center;
+                gap: 5px;
+
+                span{
+                    display: flex;
+                    align-items: center;
+                }
+                .likeCount{
+                    font-family:monospace;
+                }
+                
+            }
+            .commentIcon{
+                display: flex;
+                align-items: center;  
+                gap: 5px;
+                .commentCount{
+                    font-family:monospace;
+                }
+            }
+
+        }
+        .showImagePostIconRightPanel{
+            span{
+                font-family:monospace;
+                font-size: .8rem;
+                cursor: pointer;
+            }
+        }
+    }
+}

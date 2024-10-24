@@ -1,0 +1,45 @@
+.followRequestCard {
+    width: 30%;
+    padding: 2px 10px;
+    border-left: 1px dashed var(--accent-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+    margin-top: 4px;
+
+
+    .details {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: .6rem;
+
+        h3 {
+            font-family: monospace;
+        }
+    }
+
+    .cgIcon {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+
+        .icon {
+
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+
+        .checkIcon {
+            color: green;
+            font-size: 1.9rem;
+        }
+
+        .closeIcon {
+            color: crimson;
+        }
+    }
+
+
+}

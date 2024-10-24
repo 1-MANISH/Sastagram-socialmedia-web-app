@@ -1,0 +1,36 @@
+.userProfile{
+    .container{
+        margin-top: 100px;
+        // border: 1px dashed var(--border-color);
+        display: flex;
+        gap: 10px;
+
+
+        .userProfileleftPanel{
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+
+            .postbuttons{
+                display: flex;
+                gap: 2rem;
+            }
+            .posts{
+           
+                height: 80vh;
+                overflow: scroll;
+                scrollbar-width: none;
+  
+            }
+        }
+        .userProfileRightPanel{
+            flex:1;
+            display: flex;
+            justify-content: center;
+            height: 300px;
+       
+        }
+    }
+}
