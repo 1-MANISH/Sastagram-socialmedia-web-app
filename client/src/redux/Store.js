@@ -4,9 +4,9 @@ import postSlice from "./slices/postSlice";
 import feedSlice from "./slices/feedSlice";
 
 export default configureStore({
-    reducer:{
-        appConfigReducer:appConfigSlice,
-        postReducer:postSlice,
-        feedReducer:feedSlice
-    }
+        reducer:{
+                appConfigReducer:appConfigSlice,
+                postReducer:postSlice,
+                feedReducer:feedSlice
+        }
 })

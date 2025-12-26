@@ -13,31 +13,31 @@ import { commentOnPostForFeedPost } from '../../redux/slices/feedSlice';
 
 function CommentBox({open,handleClose,post,showFeed}) {
 
-    const [message,setMessage] = useState("")
-    const dispatch = useDispatch()
-    
+        const [message,setMessage] = useState("")
+        const dispatch = useDispatch()
+        const postComments = useSelector(store=>store.postReducer.postComments)
+        
 
-    const handleSubmit = async(e)=>{
-            e.preventDefault()
-            try {
-                if(showFeed)
-                    dispatch(commentOnPostForFeedPost({postId:post?._id,message:message,dispatch}))
-                else
-                    dispatch(commentOnPost({postId:post?._id,message:message,dispatch}))
-                    
-                dispatch(getPostComment(post._id))
-            } catch (error) {
-                console.log(`error from message sent ${error}`);
-            }
-    }
+        const handleSubmit = async(e)=>{
+                e.preventDefault()
+                try {
+                        if(showFeed)
+                                dispatch(commentOnPostForFeedPost({postId:post?._id,message:message}))
+                        else
+                                dispatch(commentOnPost({postId:post?._id,message:message,dispatch}))
+                        
+                        dispatch(getPostComment(post._id))
+                        setMessage("")
+                } catch (error) {
+                        console.log(`error from message sent ${error}`);
+                }
+        }
 
 
-
-    const postComments = useSelector(store=>store.postReducer.postComments)
-    
-    useEffect(()=>{
-            dispatch(getPostComment(post?._id))
-    },[post._id,dispatch])
+        
+        useEffect(()=>{
+                dispatch(getPostComment(post?._id))
+        },[post._id,dispatch])
   
   return (
     <div className='commentBox'>
@@ -60,7 +60,7 @@ function CommentBox({open,handleClose,post,showFeed}) {
                 <Typography className='comments' id="modal-modal-description" sx={{ mt: 2 }}>
                    
                    {
-                    postComments?.map((comment)=>{
+                    postComments && postComments?.map((comment)=>{
                         return <Comment comment={comment} />
                     })
                    }

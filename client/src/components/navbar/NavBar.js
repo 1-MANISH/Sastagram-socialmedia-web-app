@@ -25,8 +25,7 @@ function NavBar() {
     try {
 
       const response = await axiosClient.post("/auth/logout");
-      console.log(response.result);
-      removeItem(ACCESS_TOKEN_KEY)
+
       dispatch(setIsLoggedIn(false))
       dispatch(setMyProfileEmpty())
       dispatch(setMyFollowSuggestionEmpty())
@@ -42,7 +41,7 @@ function NavBar() {
   }
 
   const userProfileNavigationHandler = async (userId) => {
-    navigate(`/user/profile/${userId}`)
+        navigate(`/user/profile/${userId}`)
   }
 
   return (

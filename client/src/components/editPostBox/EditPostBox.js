@@ -3,6 +3,7 @@ import "./EditPostBox.scss";
 import { Box, Modal, Typography } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { updatePost } from "../../redux/slices/postSlice";
+import toast from "react-hot-toast";
 
 function EditPostBox({ open, handleClose, post }) {
 
@@ -18,9 +19,10 @@ function EditPostBox({ open, handleClose, post }) {
             const updatedPost = {...post,title:newTitle,caption:newCaption}
             dispatch(updatePost({
                 post:updatedPost,
-                dispatch
             }))
+            toast.success("Post Updated Successfully")
         } catch (error) {
+            toast.error("Post Update Failed")
             console.log(`Error from ${error}`);
         }
     }

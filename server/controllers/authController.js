@@ -18,13 +18,18 @@ const signupController = async (req,res)=>{
 
         // 2.1 Field Check
         if(!name || !email || !password){
-           return res.send(errorResponse(400,"Please send required field 👿"))
+                return res.send(errorResponse(400,"Please send required field 👿"))
+        }
+
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if(!emailRegex.test(email)){
+                return res.send(errorResponse(400,"Please enter valid email"))
         }
 
         // 2.2 Already exist with same email because email should be unique
         const oldUser = await User.findOne({email})
         if(oldUser){
-            return res.send(errorResponse(409,"User Already exist with same credentials 😱"))
+                return res.send(errorResponse(409,"User Already exist with same credentials 😱"))
         }
 
         // 3. Convert password to HASH password
@@ -56,41 +61,55 @@ const loginController = async (req,res)=>{
 
         // 2.1 field check
         if(!email || !password){
-            return res.send(errorResponse(400,"Please send required field 👿"))
+                return res.send(errorResponse(400,"Please send required field 👿"))
         }
+
 
         // 2.2 User account created or not : registered or not
         const user = await User.findOne({email})
         if(!user){
-            return res.send(errorResponse(404,"User is not registered 😂"))
+                return res.send(errorResponse(404,"User is not registered 😂"))
         }
+
 
         // 2.3 password match
         const matched  = await bcrypt.compare(password,user.password)
         if(!matched){
-            return res.send(errorResponse(403,"Password is wrong 😂"))
+                return res.send(errorResponse(403,"Wrong credentials 😂"))
         }
 
-        // 3. Generate access token : save in local storage from FrontEnd
-
+        // 3. Generate access token : save in cookies: from backend
         const accessToken = generateAccessToken({
-            _id :user._id
+                _id :user._id
         })
-
         // 4.  Generate refresh token : save to cookies : from BackEnd
         const refreshToken = generateRefreshToken({
-            _id:user._id
+                _id:user._id
         })
 
-        // 5. Set this to cookies in frontend
+        const flag  = process.env.NODE_ENV
 
-        res.cookie('refreshToken',refreshToken,{
-            httpOnly:true,
-            secure:true
+        res
+        .cookie('accessToken',accessToken,{
+                maxAge:1000*60*60*24,
+                httpOnly:flag === "production",
+                secure:true,
+                sameSite:flag === "production" ? "none" : "lax"
+        })
+        .cookie('refreshToken',refreshToken,{
+                maxAge:1000*60*60*24*7,
+                httpOnly:flag === "production",
+                secure:true,
+                sameSite:flag === "production" ? "none" : "lax"
         })
 
         // ACK
-        return res.send(successResponse(200,{accessToken}))
+        return res.send(successResponse(200,{user:{
+                name:user.name,
+                email:user.email,
+                avatar:user.avatar,
+                _id:user._id
+        }}))
 
     } catch (error) {
 
@@ -107,7 +126,7 @@ const refreshAccessTokenController = async(req,res)=>{
         const cookies = req.cookies
 
         if(!cookies.refreshToken){
-            return res.send(errorResponse(401,"Refresh token required 🙄"))
+                return res.send(errorResponse(401,"Refresh token required 🙄"))
         }
 
         // 2. extract jwt token - RT
@@ -126,6 +145,17 @@ const refreshAccessTokenController = async(req,res)=>{
             _id:userID
         })
 
+        res.cookie(
+                'accessToken'
+                ,newAccessToken,
+                {
+                        maxAge:1000*60*60*24,
+                        httpOnly:true,
+                        secure:true,
+                        sameSite:"none"
+                }
+        )
+
         // ACK
         return res.send(successResponse(201,{newAccessToken}))
         
@@ -139,12 +169,26 @@ const refreshAccessTokenController = async(req,res)=>{
 const logoutController = async (req,res)=>{
     console.log(`logoutController called ⛱`);
     try {
-        // console.log(req.cookies.jwt);
+
         // 1. cleare cookies : now user not able to refersh access token
-        res.clearCookie('refreshToken',{
-            httpOnly:true,
-            secure:true
-        })
+        res.cookie(
+                'refreshToken'
+                ,null,{
+                        maxAge:0,
+                        httpOnly:true,
+                        secure:true,
+                        sameSite:"none"
+                })
+                .cookie(
+                'accessToken'
+                ,null,
+                {
+                        maxAge:0,
+                        httpOnly:true,
+                        secure:true,
+                        sameSite:"none"
+                }
+        )
 
         // 2. Also remove AT from local storage in frontEnd
         return res.send(successResponse(200,"Logout successfully 😎"))

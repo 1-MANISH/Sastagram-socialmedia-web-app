@@ -73,6 +73,8 @@ const deleteUserProfileController = async (req,res) => {
         // Delete user
         await User.deleteOne({_id:currentUser._id})
 
+        // TODO:socket
+
 
         return res.send(successResponse(200,"User Profile Deleted Successfull ⛳"))
         
@@ -146,6 +148,9 @@ const sentfollowBackRequestController = async(req,res)=>{
           await currentUser.save()
           await userToFollowBack.save()
 
+
+        //   TODO:socket
+
           return res.send(successResponse(200,"FollowBack Request Sent 🎆"))
 
     } catch (error) {
@@ -192,6 +197,8 @@ const rejectRequestController = async (req,res) => {
          
          await currentUser.save()
          await userToRejectFollowRequest.save()
+
+        // TODO:socket
 
          return res.send(successResponse(200,{requestStatus:"Request Rejected 💣"}))
         
@@ -251,6 +258,8 @@ const acceptRequestController = async (req,res) => {
         
         await currentUser.save()
         await userToAcceptFollowRequest.save()
+
+        // TODO:socket
 
         //ACK
         return res.send(successResponse(200,{requestStatus:"Request Accepted 🎉"}))
@@ -313,6 +322,8 @@ const sentFollowRequestController = async (req,res)=>{
         await currentUser.save()
         await userToSentFollowRequest.save()
 
+        // TODO :socket
+
         return res.send(successResponse(200,{requestStatus}))
 
         
@@ -332,14 +343,14 @@ const unFollowUserController = async (req,res) => {
         const currentUser = await User.findById(currentUserId)
 
         if(!currentUser){
-            return res.send(errorResponse(404,"User Not Found 😂"))
+                return res.send(errorResponse(404,"User Not Found 😂"))
         }
 
         // 2. get userId to follow or unfollow
         const userIdToUnFollow = req.params.id
 
         if(!userIdToUnFollow){
-            return res.send(errorResponse(404,"UserId to follow is not valid 😂"))
+                return res.send(errorResponse(404,"UserId to follow is not valid 😂"))
         }
 
         const userToUnFollow = await User.findById(userIdToUnFollow)
@@ -364,6 +375,8 @@ const unFollowUserController = async (req,res) => {
 
         await currentUser.save()
         await userToUnFollow.save()
+
+        // TODO:socket
 
         return res.send(successResponse(200,"Unfollow the user 🎭"))
         
@@ -394,26 +407,26 @@ const getFollowSuggestionController = async (req,res) => {
         const followSuggestions = []
 
         users.forEach(async(user)=>{
-            flag = true
-            user.followers.forEach((userId)=>{
-                if(userId.equals(currentUserId)){
-                    flag = false
-                    return
-                }
-            })
-            user.followRequest.forEach((userId)=>{
-                if(userId.equals(currentUserId)){
-                    flag=false
-                    return
-                }
-            })
+                flag = true
+                user.followers.forEach((userId)=>{
+                        if(userId.equals(currentUserId)){
+                        flag = false
+                        return
+                        }
+                })
+                user.followRequest.forEach((userId)=>{
+                        if(userId.equals(currentUserId)){
+                        flag=false
+                        return
+                        }
+                })
 
-            user.followingRequest.forEach((userId)=>{
-                if(userId.equals(currentUserId)){
-                    flag=false
-                    return
-                }
-            })
+                user.followingRequest.forEach((userId)=>{
+                        if(userId.equals(currentUserId)){
+                        flag=false
+                        return
+                        }
+                })
             if(flag)
               followSuggestions.push(user)
         })
@@ -438,7 +451,7 @@ const getFeedDataController = async (req,res)=>{
         // 2. find all user posts other than current user
         const allPosts = await Post.find({createdBy:{$ne:currentUserId}}).populate("createdBy").lean()
 
-        allPosts?.map((post)=>{
+        allPosts?.map(async(post)=>{
             let flag = false
             post.likedBy?.forEach((userId)=>{
                 if(userId.equals(currentUserId)){
@@ -569,6 +582,8 @@ const updateUserProfileController = async(req,res)=>{
 
         const updatedUser = await currentUser.save()
 
+        // TODO:socket
+
         // ACK
         return res.send(successResponse(200,{updatedUser}))
         
@@ -585,7 +600,7 @@ const getUserProfileController = async(req,res)=>{
         // 1. Get id of user from url : /api/user/id=1dhjsd87871
         const userId = req.params.id
         if(!userId){
-            return res.send(errorResponse(400,"UserId is not valid 🤢"))
+                return res.send(errorResponse(400,"UserId is not valid 🤢"))
         }
 
         // 2. Find user
@@ -597,14 +612,19 @@ const getUserProfileController = async(req,res)=>{
         }).lean();
 
         // mapping to manage likes
-        user?.postCreated?.map((post)=>{
-            if(post.likedBy?.includes(userId) > 0){
-                post.isLiked=true
-            }else{
-                post.isLiked=false
-            }
-            post.createdAgo = ta.ago(post.createdAt)
-            return post
+        user?.postCreated?.map(async(post)=>{
+                let flag = false
+                post.likedBy?.forEach(async(userId)=>{
+                        if(userId.equals(req._id)){
+                                post.isLiked=true
+                                flag=true
+                                return
+                        }
+                })
+                if(!flag)
+                        post.isLiked=false
+                post.createdAgo = ta.ago(post.createdAt)
+                return post
         })
         user.postCreated.reverse()
 

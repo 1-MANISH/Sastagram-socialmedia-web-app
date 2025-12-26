@@ -46,79 +46,81 @@ const getPostCommentController = async (req,res) => {
 
 // ====> /api/post/likeOrUnlike/id=s87sfsufshf
 const likeOrUnlikePostController = async (req,res) => {
-    console.log(`likeOrUnlikePostController called 😎`);
-    try {
-        // 1. Current user id /  loggedIn user id
-        const currentUserId = req._id
+        console.log(`likeOrUnlikePostController called 😎`);
+        try {
+                // 1. Current user id /  loggedIn user id
+                const currentUserId = req._id
 
-        const currentUser = await User.findById(currentUserId)
-        if(!currentUser){
-            return res.send(errorResponse(400,"Current user is not valid 😣"))
-        }
+                const currentUser = await User.findById(currentUserId)
+                if(!currentUser){
+                        return res.send(errorResponse(400,"Current user is not valid 😣"))
+                }
 
-        // 2. Now find id of the post to like
-        const postId = req.params.id
+                // 2. Now find id of the post to like
+                const postId = req.params.id
 
-        if(!postId){
-            return res.send(errorResponse(400,"Post is not valid 🤢"))
-        }
+                if(!postId){
+                        return res.send(errorResponse(400,"Post is not valid 🤢"))
+                }
 
-        // 3. find post
-        const postToLike= await Post.findById(postId)
+                // 3. find post
+                const postToLike= await Post.findById(postId)
+                
+                if(!postToLike){
+                        return res.send(errorResponse(400,"Post not found 🤢"))
+                }
+
+                // Check for postLike status
+                let isPostLiked = false
+                let status = ""
+
+                postToLike.likedBy.forEach((userId)=>{
+                        if(userId.equals(currentUserId)){
+                                isPostLiked=true
+                                return
+                        }
+                })
+                
         
-        if(!postToLike){
-            return res.send(errorResponse(400,"Post not found 🤢"))
+                if(isPostLiked){  // 4.a Post is Already liked : Unlike IT
+
+                        // remove post_id from postLiked of user
+                        currentUser.postLiked = currentUser.postLiked.filter((postId)=>{
+                                return !postId.equals(postToLike._id)
+                        })
+                        // remove user_id from likedBy of post
+
+                        postToLike.likedBy = postToLike.likedBy.filter((userId)=>{
+                                return !userId.equals(currentUser._id)
+                        })
+
+                        status = "POST UNLIKED 👎"
+                
+                }
+                else{             // 4.b Post to be liked : Like It
+
+                        // add post_id to postLiked of user
+                        currentUser.postLiked.push(postToLike._id)
+
+                        // add userId to likedBy of post
+                        postToLike.likedBy.push(currentUser._id)
+
+                        status="POST LIKED 💖"
+                }
+
+
+        // save both to DB
+        await currentUser.save()
+        await postToLike.save()
+
+        // TODO:socket
+
+        return res.send(successResponse(200,{postLikeStatus:status}))
+
+
+        } catch (error) {
+                return res.send(errorResponse(500,error.message))
         }
-
-        // Check for postLike status
-        let isPostLiked = false
-        let status = ""
-
-        postToLike.likedBy.forEach((userId)=>{
-            if(userId.equals(currentUserId)){
-                isPostLiked=true
-                return
-            }
-        })
-        
-       
-        if(isPostLiked){  // 4.a Post is Already liked : Unlike IT
-
-            // remove post_id from postLiked of user
-            currentUser.postLiked = currentUser.postLiked.filter((postId)=>{
-                return !postId.equals(postToLike._id)
-            })
-            // remove user_id from likedBy of post
-
-            postToLike.likedBy = postToLike.likedBy.filter((userId)=>{
-                return !userId.equals(currentUser._id)
-            })
-
-            status = "POST UNLIKED 👎"
-           
-        }
-        else{             // 4.b Post to be liked : Like It
-
-            // add post_id to postLiked of user
-            currentUser.postLiked.push(postToLike._id)
-
-            // add userId to likedBy of post
-            postToLike.likedBy.push(currentUser._id)
-
-            status="POST LIKED 💖"
-        }
-
-
-       // save both to DB
-       await currentUser.save()
-       await postToLike.save()
-
-       return res.send(successResponse(200,{postLikeStatus:status}))
-
-
-    } catch (error) {
-        return res.send(errorResponse(500,error.message))
-    }
 }
 
 // ====> /api/post/commentOnPost/id=s87sfsufshf
@@ -153,11 +155,13 @@ const commentOnPostController = async (req,res) =>{
         // 5. Add comment of current user to this post
 
         postToComment.comment.push({
-            commentBy :currentUserId,
-            message :message
+                commentBy :currentUserId,
+                message :message
         })
 
         await postToComment.save()
+
+        // TODO:Socket
 
         return res.send(successResponse(200,"Message sent 🎇"))
 
@@ -221,6 +225,8 @@ const createPostController = async (req,res) => {
         currentUser.postCreated.push(postCreated._id)
         await currentUser.save()
 
+        // TODO:SOCKET
+
         return res.send(successResponse(201,{postCreated}))
         
     } catch (error) {
@@ -274,6 +280,8 @@ const deletePostController = async (req,res) => {
         // 5.3 Delete post from post DB
         const deletedPost = await Post.findByIdAndDelete(postToDelete._id)
 
+        // TODO:socket
+
         return res.send(successResponse(200,{deletedPost}))
 
         
@@ -321,6 +329,8 @@ const updatePostController = async (req,res) => {
         postToUpdate.caption = caption
 
         const postUpdated = await postToUpdate.save()
+
+        // TODO:SOCKET
 
         // ACK
         return res.send(successResponse(200,{postUpdated}))

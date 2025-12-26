@@ -6,44 +6,41 @@ import { useParams } from 'react-router-dom'
 
 function ShowVideos() {
 
-  const[showFeed,setShowFeed] = useState(true)
-  const param = useParams()
+        const[showFeed,setShowFeed] = useState(true)
+        const param = useParams()
 
-  useEffect(()=>{
-    if(!param.userId){
-      setShowFeed(true)
-    }else{
-      setShowFeed(false)
-    }
-  },[param.userId])
+        useEffect(()=>{
+                if(!param.userId){
+                        setShowFeed(true)
+                }else{
+                        setShowFeed(false)
+                }
+        },[param.userId])
 
-  const userPost = useSelector(store=>store.postReducer.userProfile).postCreated
-  const feedData = useSelector(store=>store.feedReducer.feedData)
+        const userPost = useSelector(store=>store.postReducer.userProfile).postCreated
+        const feedData = useSelector(store=>store.feedReducer.feedData)
 
-  return (
-    <div className='showVideos'>
+        return (
+                <div className='showVideos'>
 
-      {
-           showFeed &&
-            feedData?.map((post)=>{
-              if(post.mediaType === "video")
-                return <ShowVideoPost key={post._id} post={post} showFeed={showFeed} />
-            })
-          
-      }
-       
-        {
-          !showFeed && 
-          userPost?.map((post)=>{
-             if(post.mediaType === "video")
-               return <ShowVideoPost key={post._id} post={post} showFeed={showFeed} />
-          })
-        } 
-
-
-
-    </div>
-  )
+                {
+                        showFeed &&
+                        feedData?.map((post)=>{
+                        if(post.mediaType === "video")
+                                return <ShowVideoPost key={post._id} post={post} showFeed={showFeed} />
+                        })
+                        
+                }
+                
+                {
+                        !showFeed && 
+                                userPost?.map((post)=>{
+                                if(post.mediaType === "video")
+                                        return <ShowVideoPost key={post._id} post={post} showFeed={showFeed} />
+                                })
+                } 
+                </div>
+        )
 }
 
 export default ShowVideos

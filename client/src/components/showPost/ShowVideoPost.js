@@ -14,117 +14,113 @@ import { useParams } from 'react-router-dom';
 
 function ShowVideoPost({post,showFeed}) {
     
-    const [open,setOpen] = useState(false)
-    const [openEditPost,setOpenEditPost] = useState(false)
-    const [loggedInUser,setLoggedInUser] = useState(false)
-    const param = useParams()
-    const currentUser = useSelector((store)=>store.appConfigReducer.myProfile)
-    const dispatch = useDispatch()
-   
+        const [open,setOpen] = useState(false)
+        const [openEditPost,setOpenEditPost] = useState(false)
+        const [loggedInUser,setLoggedInUser] = useState(false)
+        const param = useParams()
+        const currentUser = useSelector((store)=>store.appConfigReducer.myProfile)
+        const dispatch = useDispatch()
+        
 
-    const handleOpenEditPost = () =>{
-      setOpenEditPost(true)
-   }
- 
-   const handleCloseEditPost = () =>{
-     setOpenEditPost(false)
-   }
+        const handleOpenEditPost = () =>{
+                setOpenEditPost(true)
+        }
+        
+        const handleCloseEditPost = () =>{
+                 setOpenEditPost(false)
+        }
 
-    const handleOpen = () => {
-      setOpen(true)
-      dispatch(getPostComment(post._id))
-    }
-    const handleClose = () =>{
-      setOpen(false)
-    }
-    const handlePostLike = () => {
-      try {
-         const currentUserId = currentUser?._id
-         const postId = post?._id
- 
-         if(showFeed){
-           dispatch(likeOnPostForFeedPost({
-             postId,
-             currentUserId,
-             dispatch
-           }))
- 
-         }else{
-           dispatch(likeOrDisLikeUserPost({
-             postId,
-             currentUserId,
-             dispatch
-           }))
-         }
- 
-      } catch (error) {
-       console.log(`Error from ${error}`);
-      }
-   }
-   useEffect(()=>{
-    if(param.userId && param.userId === currentUser._id){
-      setLoggedInUser(true)
-      
-    }else{
-      setLoggedInUser(false)
-    }
-    dispatch(getPostComment(post._id))
-  },[dispatch,post._id,showFeed])
-  
-    
-  return (
-    <div className='showVideoPost'>
-         <div className='showVideoPostCreator'>
-            <div className='userShowLeftPanel'>
-                <UserAvatar user={post?.createdBy}/>
-                <span>{post?.createdBy?.name}</span>
-           </div>
-           <div className='userShowRightPanel'>
-           {
+        const handleOpen = () => {
+                setOpen(true)
+                dispatch(getPostComment(post._id))
+        }
+        const handleClose = () =>{
+                setOpen(false)
+        }
+        const handlePostLike = () => {
+                try {
+                        const currentUserId = currentUser?._id
+                        const postId = post?._id
                 
-                loggedInUser && 
-                <>
-                <IoMdMore className='icon' onClick={handleOpenEditPost}/>
-                <EditPostBox open={openEditPost} handleClose={handleCloseEditPost} post={post}/>
-                </>
-              }
-              {
-                !loggedInUser && <IoMdMore className='icon'/>
-              }
-            </div>
-        </div>
-        <div className='showVideoPostVideo'>
-           <video controls >
-           <source src={post?.media?.url ? post?.media?.url: postImage} type="video/mp4" />
-           </video>
-        </div>
-        <div className='showVideoPostDetails'>
-              <h4>{post?.title }</h4>
-              <p>{post?.caption }</p>
-        </div>
-        <div className='showVideoPostIcon'>
-            <div className='showVideoPostIconLeftPanel'>
-                <div className='likes'>
+                        if(showFeed){
+                                dispatch(likeOnPostForFeedPost({
+                                        postId,
+                                        currentUserId,
+                                }))
+                
+                        }else{
+                                dispatch(likeOrDisLikeUserPost({
+                                        postId,
+                                        currentUserId,
+                                }))
+                        }
+                
+                } catch (error) {
+                        console.log(`Error from ${error}`);
+                }
+        }
+        useEffect(()=>{
+                if(param.userId && param.userId === currentUser._id){
+                        setLoggedInUser(true)
+                
+                }else{
+                         setLoggedInUser(false)
+                }
+
+        },[dispatch,post._id,showFeed])
+        
+        
+        return (
+        <div className='showVideoPost'>
+                <div className='showVideoPostCreator'>
+                <div className='userShowLeftPanel'>
+                        <UserAvatar user={post?.createdBy}/>
+                        <span>{post?.createdBy?.name}</span>
+                </div>
+                <div className='userShowRightPanel'>
                 {
-                    post.isLiked && <span onClick={handlePostLike}><FaHeart style={{color:"red"}} className='icon'/></span>
-                  }
-                  {
-                     !post.isLiked &&<span onClick={handlePostLike}><FaRegHeart className='icon'/ ></span>
-                  }
-                    <span className='likeCount'>{post?.likedBy?.length ? post?.likedBy?.length : "No Likes"}</span>
+                        
+                        loggedInUser && 
+                        <>
+                        <IoMdMore className='icon' onClick={handleOpenEditPost}/>
+                        <EditPostBox open={openEditPost} handleClose={handleCloseEditPost} post={post}/>
+                        </>
+                }
+
                 </div>
-                <div className='commentIcon'>
-                    <FaRegCommentAlt className='icon' onClick={handleOpen} />
-                    <span className='commentCount'>{post?.comment?.length ? post?.comment?.length : "No Comments"}</span>
-                    <CommentBox open={open} handleClose={handleClose} post={post} showFeed={showFeed}/>
                 </div>
-            </div>
-            <div className='showVideoPostIconRightPanel'>
-                <span>{post?.createdAgo}</span>  
-            </div>
+                <div className='showVideoPostVideo'>
+                <video controls >
+                <source src={post?.media?.url ? post?.media?.url: postImage} type="video/mp4" />
+                </video>
+                </div>
+                <div className='showVideoPostDetails'>
+                <h4>{post?.title }</h4>
+                <p>{post?.caption }</p>
+                </div>
+                <div className='showVideoPostIcon'>
+                <div className='showVideoPostIconLeftPanel'>
+                        <div className='likes'>
+                        {
+                        post.isLiked && <span onClick={handlePostLike}><FaHeart style={{color:"red"}} className='icon'/></span>
+                        }
+                        {
+                        !post.isLiked &&<span onClick={handlePostLike}><FaRegHeart className='icon'/ ></span>
+                        }
+                        <span className='likeCount'>{post?.likedBy?.length ? post?.likedBy?.length : "No Likes"}</span>
+                        </div>
+                        <div className='commentIcon'>
+                        <FaRegCommentAlt className='icon' onClick={handleOpen} />
+                        <span className='commentCount'>{post?.comment?.length ? post?.comment?.length : "No Comments"}</span>
+                        <CommentBox open={open} handleClose={handleClose} post={post} showFeed={showFeed}/>
+                        </div>
+                </div>
+                <div className='showVideoPostIconRightPanel'>
+                        <span>{post?.createdAgo}</span>  
+                </div>
+                </div>
         </div>
-    </div>
-  )
+        )
 }
 
 export default ShowVideoPost

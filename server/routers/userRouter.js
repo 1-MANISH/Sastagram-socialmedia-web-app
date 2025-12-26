@@ -12,7 +12,7 @@ router.post("/sentfollowBackRequest/id=:id",requireUserMiddleware,sentfollowBack
 router.post("/rejectRequest/id=:id",requireUserMiddleware,rejectRequestController) // rejectRequest
 router.post("/acceptRequest/id=:id",requireUserMiddleware,acceptRequestController) // acceptRequest
 router.post("/sentFollowRequest/id=:id",requireUserMiddleware,sentFollowRequestController) // sentFollowRequestController
-router.post("/unFollowUser",requireUserMiddleware,unFollowUserController) // unFollowUser
+router.post("/unFollowUser/id=:id",requireUserMiddleware,unFollowUserController) // unFollowUser
 
 
 

@@ -7,39 +7,41 @@ import UserDetailBox from '../userDetailsBox/UserDetailBox'
 
 function UserProfile() {
 
-  const[isLoggedInUser,setIsLoggedInUser]=useState(true)
-  const param = useParams()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+        const[isLoggedInUser,setIsLoggedInUser]=useState(true)
+        const param = useParams()
+        const dispatch = useDispatch()
+        const navigate = useNavigate()
 
-  
-  useEffect(()=>{
-     setIsLoggedInUser(userProfile._id === currentUserProfile._id)
-     dispatch(getUserProfile(param.userId))
-  },[param.userId])
+        const currentUserProfile = useSelector(store=>store.appConfigReducer.myProfile)
+        const userProfile = useSelector(store=>store.postReducer.userProfile)
 
-  const currentUserProfile = useSelector(store=>store.appConfigReducer.myProfile)
-  const userProfile = useSelector(store=>store.postReducer.userProfile)
+        
+        useEffect(()=>{
+                dispatch(getUserProfile(param.userId))
+                setIsLoggedInUser(userProfile._id === currentUserProfile?._id)
+        },[param.userId,userProfile._id,currentUserProfile._id])
 
 
-  return (
-    <div className='userProfile'>
-        <div className='container'>
-             <div className='userProfileleftPanel'>
-                 <div className='postbuttons'>
-                    <button className='post-btn'  onClick={() => { navigate(`/user/profile/${isLoggedInUser?currentUserProfile._id:userProfile._id}/post/image`) }}>Images</button>
-                    <button className='post-btn'  onClick={() => { navigate(`/user/profile/${isLoggedInUser?currentUserProfile._id:userProfile._id}/post/video`) }}>Video</button>
-                  </div>
-                  <div className='posts'>
-                      <Outlet  />
-                  </div>
-             </div>
-             <div className='userProfileRightPanel'>
-                  <UserDetailBox user={isLoggedInUser?currentUserProfile :userProfile} />
-             </div>
+
+
+        return (
+        <div className='userProfile'>
+                <div className='container'>
+                <div className='userProfileleftPanel'>
+                        <div className='postbuttons'>
+                                <button className='post-btn'  onClick={() => { navigate(`/user/profile/${isLoggedInUser?currentUserProfile._id:userProfile._id}/post/image`) }}>Images</button>
+                                <button className='post-btn'  onClick={() => { navigate(`/user/profile/${isLoggedInUser?currentUserProfile._id:userProfile._id}/post/video`) }}>Video</button>
+                        </div>
+                        <div className='posts'>
+                        <Outlet  />
+                        </div>
+                </div>
+                <div className='userProfileRightPanel'>
+                        <UserDetailBox user={isLoggedInUser?currentUserProfile :userProfile} />
+                </div>
+                </div>
         </div>
-    </div>
-  )
+        )
 }
 
 export default UserProfile

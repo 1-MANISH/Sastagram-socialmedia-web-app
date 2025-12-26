@@ -15,9 +15,9 @@ function Comment({comment}) {
             <div className='commentHeader'
             >
                 <Typography sx={{ width: '10%', flexShrink: 0 }}>
-                    <UserAvatar user={comment.commentBy}/>
+                    <UserAvatar user={comment?.commentBy}/>
                 </Typography>
-                <Typography sx={{ color: 'text.secondary' }}>{comment.commentBy.name}</Typography>
+                <Typography sx={{ color: 'text.secondary' }}>{comment?.commentBy?.name}</Typography>
             </div>
             <div className='commentMessage'>
                 <Typography sx={{ml:5.8}}>
