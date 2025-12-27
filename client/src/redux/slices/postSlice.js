@@ -105,7 +105,6 @@ const postSlice = createSlice({
                         state.userProfile = {}
                 },
                 addAComment:(state,action)=>{
-                        console.log(action.payload,1212)
                         state.postComments.splice(0,0,action.payload)
                 }
         },
@@ -160,7 +159,8 @@ const postSlice = createSlice({
                         }
                        
                         // also in post comments- add
-                        state.postComments = state.postComments.concat({commentBy:action.payload.currentUser,message:message,commentedAt:Date.now()})
+                        state.postComments.splice(0,0,{commentBy:action.payload.currentUser,message:message,commentedAt:Date.now()})
+                        console.log(12,state.postComments.length);
                         
                         
                 })

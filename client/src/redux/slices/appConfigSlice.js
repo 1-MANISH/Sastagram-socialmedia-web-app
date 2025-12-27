@@ -1,16 +1,22 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosClient } from "../../utils/axiosClient";
-
+import {io} from "socket.io-client";
+import { GET_ONLINE_USERS } from "../../utils/events";
 
 // async operations
 
+const BASE_URL = process.env.REACT_MODE === "development" ?process.env.REACT_APP_SERVER_BASE_URL :process.env.REACT_APP_SERVER_BASE_URL
+
 export const getMyProfile = createAsyncThunk(
         "user/getMyProfile",
-        async () => {
+        async (_,{dispatch}) => {
                 try {
                         const response = await axiosClient.get("api/user/myProfile")
+                        console.log(BASE_URL,12)
+                        dispatch(connectSocket())
                         return response.result;
                 } catch (error) {
+                        dispatch(disconnectSocket())
                         return Promise.reject(error)
                 }
         }
@@ -111,17 +117,12 @@ const appConfigSlice = createSlice({
                 isLoggedIn: false,
                 myProfile: {},
                 myFollowSuggestions: [],
-                toastData: {
-                        // type
-                        // message
-                },
+                onlineUsers:[],
+                socket:null
         },
         reducers: {
                 setLoading: (state, action) => {
                         state.isLoading = action.payload
-                },
-                setToastData: (state, action) => {
-                        state.toastData = action.payload
                 },
                 setIsLoggedIn: (state, action) => {
                         state.isLoggedIn = action.payload
@@ -131,6 +132,43 @@ const appConfigSlice = createSlice({
                 },
                 setMyFollowSuggestionEmpty: (state, action) => {
                         state.myFollowSuggestions = []
+                },
+                connectSocket:(state,_action)=>{
+                     
+                        try {
+                                const myProfile = state.myProfile
+                                const socket = state.socket
+
+                                if(!myProfile._id || socket?.connected) return
+                           
+                                const socketInstance = io(
+                                        BASE_URL,
+                                        {
+                                                withCredentials: true
+                                        }
+                                )
+
+                                socketInstance.connect()
+
+                                state.socket = socketInstance
+
+                                // listen for online users
+                                 state.socket.on(GET_ONLINE_USERS,(userIds)=>{
+                                        state.onlineUsers = userIds
+                                })
+                        } catch (error) {
+                                console.log(`Error connecting socket: ${error}`)
+                        }
+
+                },
+                disconnectSocket:(state,_action)=>{
+                        try {
+                                const socket = state.socket
+                                if(socket?.connected) 
+                                        socket.disconnect()
+                        } catch (error) {
+                                 console.log(`Error disconnecting socket: ${error}`)
+                        }
                 }
         },
         extraReducers: function (builder) {
@@ -204,4 +242,4 @@ const appConfigSlice = createSlice({
 
 export default appConfigSlice.reducer
 
-export const { setLoading, setToastData, setIsLoggedIn, setMyProfileEmpty, setMyFollowSuggestionEmpty } = appConfigSlice.actions
+export const { setLoading, setToastData, setIsLoggedIn, setMyProfileEmpty, setMyFollowSuggestionEmpty,connectSocket,disconnectSocket } = appConfigSlice.actions

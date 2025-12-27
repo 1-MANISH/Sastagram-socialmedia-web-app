@@ -1,9 +1,8 @@
 import React from 'react'
 import { axiosClient } from '../../utils/axiosClient'
-import { ACCESS_TOKEN_KEY, removeItem } from '../../utils/localStorageManager'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { setIsLoggedIn, setMyFollowSuggestionEmpty, setMyProfileEmpty } from '../../redux/slices/appConfigSlice'
+import { disconnectSocket, setIsLoggedIn, setMyFollowSuggestionEmpty, setMyProfileEmpty } from '../../redux/slices/appConfigSlice'
 import { IoLogOut } from 'react-icons/io5'
 import { CiEdit } from 'react-icons/ci'
 import { IoIosNotifications } from "react-icons/io";
@@ -31,6 +30,7 @@ function NavBar() {
       dispatch(setMyFollowSuggestionEmpty())
       dispatch(setUserProfileEmpty())
       dispatch(setFeedDataEmpty())
+      dispatch(disconnectSocket())
       navigate("/login")
 
     } catch (error) {

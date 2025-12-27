@@ -21,6 +21,7 @@ function ShowImagePost({post,showFeed}) {
         const param = useParams()
 
         const currentUser = useSelector((store)=>store.appConfigReducer.myProfile)
+        const userPostComments = useSelector(store=>store.postReducer.postComments)
         const dispatch = useDispatch()
 
         const handleOpenEditPost = () =>{
@@ -108,11 +109,11 @@ function ShowImagePost({post,showFeed}) {
                         !post.isLiked &&<span onClick={handlePostLike}><FaRegHeart className='icon'/ ></span>
                         }
                         
-                        <span className='likeCount'>{post?.likedBy?.length ? post?.likedBy?.length : "No Likes"}</span>
+                        <span className='likeCount'>{ post?.likedBy?.length ? post?.likedBy?.length : "No Likes"}</span>
                         </div>
                         <div className='commentIcon'>
                                 <FaRegCommentAlt className='icon' onClick={handleOpen} />
-                                <span className='commentCount'>{post?.comment?.length ? post?.comment?.length : "No Comments"}</span>
+                                <span className='commentCount'>{post?.comment?.length ? userPostComments?.length : "No Comments"}</span>
                                 <CommentBox open={open} handleClose={handleClose} post={post} showFeed={showFeed} />
                         </div>
                 </div>

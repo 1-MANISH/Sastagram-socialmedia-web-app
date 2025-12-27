@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createPost, getUserProfile } from '../../redux/slices/postSlice'
 import demoPostImage from "./../../assets/media/demoPostImage.jpg"
 import demoPostVideo from "./../../assets/media/demoPostVideo.3gp"
-
+import { toast } from 'react-hot-toast'
 function CreatePost() {
 
   const [title, setTitle] = useState("")
@@ -41,7 +41,7 @@ function CreatePost() {
         }
       }
     } catch (error) {
-      console.log(`Error from upload post `);
+      console.log(`Error from upload post `,error);
     }
 
 
@@ -60,9 +60,12 @@ function CreatePost() {
           },
          dispatch
         }))
+
+        toast.success("Post Created Successfully")
    
        
     } catch (error) {
+        toast.error("Post Creation Failed")
         console.log(`Error from ${error}`);
     }
   }

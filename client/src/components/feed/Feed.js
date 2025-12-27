@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 import ShowSuggestion from '../showSuggestion/ShowSuggestion'
 import { useDispatch } from 'react-redux'
-import { getMyFollowSuggestion, getMyProfile } from '../../redux/slices/appConfigSlice'
+import { getMyFollowSuggestion,  } from '../../redux/slices/appConfigSlice'
 import "./Feed.scss"
 import { IoCreate } from "react-icons/io5";
 import { getFeedData } from '../../redux/slices/feedSlice'

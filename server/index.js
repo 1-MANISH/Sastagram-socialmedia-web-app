@@ -4,16 +4,17 @@ const cloudinary = require("cloudinary").v2
 const cookieParser = require("cookie-parser")
 const cors = require("cors")
 const connectToDatabase = require("./dbConnect")
-
+const { app, server } = require("./socket")
 
 // import routers
 const authRouter = require("./routers/authRouter")
 const userRouter = require("./routers/userRouter")
 const postRouter = require("./routers/postRouter")
 
+
 //config
 dotenv.config({path:'./.env'})
-const app = express()
+
 cloudinary.config({
     cloud_name:process.env.CLOUD_NAME,
     api_key:process.env.API_KEY,
@@ -45,7 +46,7 @@ app.use("/api/post/",postRouter)
 connectToDatabase()
 
 
-app.listen(PORT ,()=>{
+server.listen(PORT ,()=>{
     console.log(`Server is listening ✌ : ${BASE_URL}:${PORT}`);
 })
 
