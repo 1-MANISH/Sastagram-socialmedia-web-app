@@ -7,7 +7,7 @@ const { errorResponse, successResponse } = require("../utils/responseWrapper")
 
 // ====> /api/post/getPostComment/id=hwud8w77ww
 const getPostCommentController = async (req,res) => {
-    console.log(`getPostCommentController called 😎`);
+    
     try {
         
         // 1. Get post Id from URL
@@ -46,7 +46,7 @@ const getPostCommentController = async (req,res) => {
 
 // ====> /api/post/likeOrUnlike/id=s87sfsufshf
 const likeOrUnlikePostController = async (req,res) => {
-        console.log(`likeOrUnlikePostController called 😎`);
+        
         try {
                 // 1. Current user id /  loggedIn user id
                 const currentUserId = req._id
@@ -126,7 +126,7 @@ const likeOrUnlikePostController = async (req,res) => {
 // ====> /api/post/commentOnPost/id=s87sfsufshf
 const commentOnPostController = async (req,res) =>{
 
-    console.log(`commentOnPostController called 😎`);
+    
     try {
 
         // 1. Get message
@@ -173,7 +173,7 @@ const commentOnPostController = async (req,res) =>{
 // ====> /api/post/createPost
 const createPostController = async (req,res) => {
 
-    console.log(`createPostController called 😎`);
+    
     try {
 
         // 1. Get current user  & user id
@@ -237,7 +237,7 @@ const createPostController = async (req,res) => {
 
 // ====> /api/post/deletePost/id=s87sfsufshf
 const deletePostController = async (req,res) => {
-    console.log(`deletePostController called 😎`);
+    
     try {
 
         // 1. Get current user  & user id
@@ -293,7 +293,7 @@ const deletePostController = async (req,res) => {
 // ====> /api/post/editPost/id=s87sfsufshf
 const updatePostController = async (req,res) => {
 
-    console.log(`editPostController called 😎`);
+    
     try {
 
         // 1. Get Required Field

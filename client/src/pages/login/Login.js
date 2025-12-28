@@ -2,9 +2,10 @@ import  {  useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { axiosClient } from '../../utils/axiosClient'
 import { useDispatch } from 'react-redux'
-import { setIsLoggedIn } from '../../redux/slices/appConfigSlice'
+import  {setIsLoggedIn,getMyProfile } from '../../redux/slices/appConfigSlice'
 import "./Login.scss"
 import toast from 'react-hot-toast'
+
 
 
 function Login() {
@@ -25,6 +26,7 @@ function Login() {
                                         password
                                 })
                                 toast.success("Login Successfull")
+                                dispatch(getMyProfile())
                                 dispatch(setIsLoggedIn(true))
                                 navigate("/feed")
                         }

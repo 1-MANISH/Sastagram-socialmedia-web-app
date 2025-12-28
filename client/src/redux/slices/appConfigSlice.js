@@ -1,22 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { axiosClient } from "../../utils/axiosClient";
-import {io} from "socket.io-client";
-import { GET_ONLINE_USERS } from "../../utils/events";
 
-// async operations
 
-const BASE_URL = process.env.REACT_MODE === "development" ?process.env.REACT_APP_SERVER_BASE_URL :process.env.REACT_APP_SERVER_BASE_URL
+
+
+
 
 export const getMyProfile = createAsyncThunk(
         "user/getMyProfile",
-        async (_,{dispatch}) => {
+        async () => {
                 try {
                         const response = await axiosClient.get("api/user/myProfile")
-                        console.log(BASE_URL,12)
-                        dispatch(connectSocket())
                         return response.result;
                 } catch (error) {
-                        dispatch(disconnectSocket())
                         return Promise.reject(error)
                 }
         }
@@ -110,6 +106,8 @@ export const rejectFollowRequest = createAsyncThunk(
 )
 
 
+
+
 const appConfigSlice = createSlice({
         name: "appConfigSlice",
         initialState: {
@@ -125,7 +123,7 @@ const appConfigSlice = createSlice({
                         state.isLoading = action.payload
                 },
                 setIsLoggedIn: (state, action) => {
-                        state.isLoggedIn = action.payload
+                        state.isLoggedIn = action.payload    
                 },
                 setMyProfileEmpty: (state, action) => {
                         state.myProfile = {}
@@ -133,43 +131,32 @@ const appConfigSlice = createSlice({
                 setMyFollowSuggestionEmpty: (state, action) => {
                         state.myFollowSuggestions = []
                 },
-                connectSocket:(state,_action)=>{
-                     
-                        try {
-                                const myProfile = state.myProfile
-                                const socket = state.socket
-
-                                if(!myProfile._id || socket?.connected) return
-                           
-                                const socketInstance = io(
-                                        BASE_URL,
-                                        {
-                                                withCredentials: true
-                                        }
-                                )
-
-                                socketInstance.connect()
-
-                                state.socket = socketInstance
-
-                                // listen for online users
-                                 state.socket.on(GET_ONLINE_USERS,(userIds)=>{
-                                        state.onlineUsers = userIds
-                                })
-                        } catch (error) {
-                                console.log(`Error connecting socket: ${error}`)
-                        }
-
+                 setOnlineUsers:(state,action)=>{
+                        console.log(1221212,action.payload)
+                        state.onlineUsers = action.payload
+                },
+                setSocket:(state,action)=>{
+                        state.socket = action.payload
+                },
+                connectSocket:(state,action)=>{
+                        
                 },
                 disconnectSocket:(state,_action)=>{
-                        try {
-                                const socket = state.socket
-                                if(socket?.connected) 
-                                        socket.disconnect()
-                        } catch (error) {
-                                 console.log(`Error disconnecting socket: ${error}`)
-                        }
+                },
+               
+                subscribeToFollowRequest:(state,action)=>{
+                        
+                },
+                unsubscribeToFollowRequest:(state)=>{
+                        
+                },
+                addFollowRequest:(state,action)=>{
+
+                        const requestedUser = state.myProfile.followRequest.find((user) => user._id === action.payload._id)
+                        if(requestedUser) return
+                                state.myProfile.followRequest.unshift(action.payload);
                 }
+
         },
         extraReducers: function (builder) {
                 builder
@@ -242,4 +229,4 @@ const appConfigSlice = createSlice({
 
 export default appConfigSlice.reducer
 
-export const { setLoading, setToastData, setIsLoggedIn, setMyProfileEmpty, setMyFollowSuggestionEmpty,connectSocket,disconnectSocket } = appConfigSlice.actions
+export const {setSocket,setOnlineUsers, setLoading, setToastData, setIsLoggedIn, setMyProfileEmpty, setMyFollowSuggestionEmpty,connectSocket,disconnectSocket,subscribeToFollowRequest,unsubscribeToFollowRequest,addFollowRequest} = appConfigSlice.actions

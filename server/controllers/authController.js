@@ -9,7 +9,7 @@ const signupController = async (req,res)=>{
 
     try {
 
-        console.log(`signupController called 🚛 `);
+       
 
         // 1. Get required field from req body
         const {name,email,password} = req.body
@@ -50,7 +50,7 @@ const signupController = async (req,res)=>{
 }
 
 const loginController = async (req,res)=>{
-    console.log(`loginController called 🏳‍🌈`);
+   
 
     try {
 
@@ -119,7 +119,7 @@ const loginController = async (req,res)=>{
 }
 
 const refreshAccessTokenController = async(req,res)=>{
-    console.log(`refreshAccessConroller called 🗽`);
+    
     try {
 
         // 1. first get cookies
@@ -167,7 +167,7 @@ const refreshAccessTokenController = async(req,res)=>{
 }
 
 const logoutController = async (req,res)=>{
-    console.log(`logoutController called ⛱`);
+    
     try {
 
         // 1. cleare cookies : now user not able to refersh access token

@@ -1,4 +1,6 @@
 
 
 export const GET_ONLINE_USERS = "GET_ONLINE_USERS"
+export const FOLLOW_REQUEST="FOLLOW_REQUEST"
+
 

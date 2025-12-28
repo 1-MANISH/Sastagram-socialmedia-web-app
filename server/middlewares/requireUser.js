@@ -4,7 +4,7 @@ const User = require("../models/User");
 
 const requireUserMiddleware = async(req,res,next)=>{
 
-    console.log(`requireUser middleware called 🎞`);
+    
 
     try {
         // 1. verify access token every time is required

@@ -1,7 +1,9 @@
 
 
 const GET_ONLINE_USERS = "GET_ONLINE_USERS"
+const FOLLOW_REQUEST = "FOLLOW_REQUEST"
 
 module.exports = {
-        GET_ONLINE_USERS
+        GET_ONLINE_USERS,
+        FOLLOW_REQUEST
 }

@@ -3,11 +3,12 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const ta = require("time-ago")
 const { successResponse, errorResponse } = require("../utils/responseWrapper");
-
+const {io,getReceiverSocketId} = require("../socket.js");
+const { FOLLOW_REQUEST } = require("../utils/events.js");
 
 // =====> /api/deleteProfile
 const deleteUserProfileController = async (req,res) => {
-    console.log(`deleteUserProfileController called 😎`);
+    
 
     try {
         
@@ -86,7 +87,7 @@ const deleteUserProfileController = async (req,res) => {
 
 // =====> /api/followbackRequest/id=shfuf78f7
 const sentfollowBackRequestController = async(req,res)=>{
-    console.log(`sentfollowBackRequestController called 😎`);
+    
     try {
           // 1. Get current user_id + user
           const currentUserId = req._id
@@ -160,7 +161,7 @@ const sentfollowBackRequestController = async(req,res)=>{
 
 // =====> /api/rejectRequest/id=sfhiuf78f78s
 const rejectRequestController = async (req,res) => {
-    console.log(`rejectRequestController called 😎`);
+    
     try {
 
          // 1. Get current user_id + user
@@ -209,7 +210,7 @@ const rejectRequestController = async (req,res) => {
 
 // =====> /api/acceptRequest/id=sfhiuf78f78s
 const acceptRequestController = async (req,res) => {
-    console.log(`acceptRequestController called 😎`);
+    
     try {
 
         // 1. Get current user_id + user
@@ -271,13 +272,13 @@ const acceptRequestController = async (req,res) => {
 
 // =====> /api/sentFollowRequest/id=sdks7d7s9dsd
 const sentFollowRequestController = async (req,res)=>{
-    console.log(`sentFollowRequestController called 😎`);
+   
     try {
 
         // 1. Get current/ logged In user_id + user
         const currentUserId = req._id
 
-        const currentUser = await User.findById(currentUserId)
+        const currentUser = await User.findById(currentUserId).select("-password")
 
         if(!currentUser){
             return res.send(errorResponse(404,"User Not Found 😂"))
@@ -323,6 +324,14 @@ const sentFollowRequestController = async (req,res)=>{
         await userToSentFollowRequest.save()
 
         // TODO :socket
+        if(!alreadySentRequest){
+                const receiverSocketId = getReceiverSocketId(userToSentFollowRequest._id.toString())
+
+                if(receiverSocketId){
+                        io.to(receiverSocketId).emit(FOLLOW_REQUEST,currentUser)
+                }
+
+        }
 
         return res.send(successResponse(200,{requestStatus}))
 
@@ -334,7 +343,7 @@ const sentFollowRequestController = async (req,res)=>{
 
 // =====> /api/user/unFollowUser/id=fhef878398r93
 const unFollowUserController = async (req,res) => {
-    console.log(`followOrUnFollowUserController called 😎`);
+   
     try {
 
         // 1. Get current/ logged In user_id + user
@@ -388,7 +397,7 @@ const unFollowUserController = async (req,res) => {
 // =====> /api/user/followRecommendation
 const getFollowSuggestionController = async (req,res) => {
 
-    console.log(`getFollowSuggestionController called 😎`);
+   
     try {
 
         // 1. First get current user_id + user
@@ -408,20 +417,19 @@ const getFollowSuggestionController = async (req,res) => {
 
         users.forEach(async(user)=>{
                 flag = true
+                // user.followingRequest.forEach((userId)=>{
+                //         if(userId.equals(currentUserId)){
+                //         flag = false
+                //         return
+                //         }
+                // })
                 user.followers.forEach((userId)=>{
-                        if(userId.equals(currentUserId)){
-                        flag = false
-                        return
-                        }
-                })
-                user.followRequest.forEach((userId)=>{
                         if(userId.equals(currentUserId)){
                         flag=false
                         return
                         }
                 })
-
-                user.followingRequest.forEach((userId)=>{
+                user.followRequest.forEach((userId)=>{
                         if(userId.equals(currentUserId)){
                         flag=false
                         return
@@ -443,7 +451,7 @@ const getFollowSuggestionController = async (req,res) => {
 // =====> /api/user/feedData
 const getFeedDataController = async (req,res)=>{
 
-    console.log(`getFeedDataController called 😎`);
+    
     try {
         // 1. get current user id
         const currentUserId = req._id
@@ -479,7 +487,7 @@ const getFeedDataController = async (req,res)=>{
 
 // =====> /api/user/getUserPost/id=dhjs787f8s
 const getUserPostController = async(req,res)=>{
-    console.log(`getUserPostController called 😎`);
+    
 
     try {
         
@@ -512,7 +520,7 @@ const getUserPostController = async(req,res)=>{
 // =====> /api/user/getMyPost
 const getMyPostController = async (req,res)=>{
 
-    console.log(`getMyPostController called 😎`);
+    
 
     try {
         // 1. Get user id
@@ -536,7 +544,7 @@ const getMyPostController = async (req,res)=>{
 // =====> /api/user/update
 const updateUserProfileController = async(req,res)=>{
 
-    console.log(`updateUserProfileController called 😎`);
+   
     try {
         
         // 1. Exract field
@@ -594,7 +602,7 @@ const updateUserProfileController = async(req,res)=>{
 
 // =====> /api/user/id=2u3uy232uhuhu
 const getUserProfileController = async(req,res)=>{
-    console.log(`getUserProfileController called 😎`);
+    
     try {
         
         // 1. Get id of user from url : /api/user/id=1dhjsd87871
@@ -645,7 +653,7 @@ const getUserProfileController = async(req,res)=>{
 // =====> /api/user/myProfile
 const getMyProfleController = async(req,res)=>{
 
-    console.log(`getMyProfleController called 😎`);
+   
 
     try {
 

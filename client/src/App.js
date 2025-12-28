@@ -16,7 +16,7 @@ import Notification from './components/notifications/Notification';
 import CreatePost from './components/createPost/CreatePost';
 import UserProfile from './components/userProfile/UserProfile';
 import UpdateUserProfile from './components/updateUserProfile/UpdateUserProfile';
-import { getMyProfile } from './redux/slices/appConfigSlice';
+import { connectSocket, getMyProfile } from './redux/slices/appConfigSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 
@@ -28,8 +28,10 @@ function App() {
         useEffect(() => {
                 
                 const checkAuth =async()=>dispatch(getMyProfile())
-                if(!isLoggedIn)
-                        checkAuth() 
+                if(!isLoggedIn){
+                         checkAuth() 
+                }
+                       
         },[dispatch, isLoggedIn])
 
         return (
