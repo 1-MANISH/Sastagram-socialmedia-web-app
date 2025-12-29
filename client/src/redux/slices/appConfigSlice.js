@@ -128,6 +128,7 @@ const appConfigSlice = createSlice({
                 setMyProfileEmpty: (state, action) => {
                         state.myProfile = {}
                 },
+
                 setMyFollowSuggestionEmpty: (state, action) => {
                         state.myFollowSuggestions = []
                 },
@@ -155,6 +156,45 @@ const appConfigSlice = createSlice({
                         const requestedUser = state.myProfile.followRequest.find((user) => user._id === action.payload._id)
                         if(requestedUser) return
                                 state.myProfile.followRequest.unshift(action.payload);
+                },
+                acceptFollowRequestSubscribe:(state,action)=>{
+
+                },
+                acceptFollowRequestUnsubscribe:(state,action)=>{
+                        
+                },
+                rejectFollowRequestSubscribe:(state,action)=>{
+
+                },
+                rejectFollowRequestUnsubscribe:(state,action)=>{
+
+                },
+                followRejectUser:(state,action)=>{
+                        const {userFR,type} = action.payload
+                        console.log(userFR,type)
+                        switch(type){
+                                case "FOLLOW REQUEST REJECTED":
+                                        state.myProfile.followingRequest = state.myProfile.followingRequest.filter((user) => user._id !== userFR._id)
+                                        break;
+                                case "FOLLOW REQUEST ACCEPTED":
+                                        state.myProfile.followingRequest = state.myProfile.followingRequest.filter((user) => user._id !==userFR._id)
+                                        state.myProfile.followings.push(userFR)
+                                        break;
+                        }
+                },
+                subscribeToUnfollowRequest:(state,action)=>{
+
+                },
+                unsubscribeToUnfollowRequest:(state,action)=>{
+                        
+
+                },
+                handleUnfollowState:(state,action)=>{
+                        // remove that user from follower and followings
+                        const userToUnfollow = action.payload
+
+                        state.myProfile.followers = state.myProfile.followers.filter((user) => user._id !== userToUnfollow._id)
+                        state.myProfile.followings = state.myProfile.followings.filter((user) => user._id !== userToUnfollow._id)
                 }
 
         },
@@ -195,6 +235,14 @@ const appConfigSlice = createSlice({
                                 return user._id !== action.payload.user._id
                         })
 
+                        state.myProfile.followings = state.myProfile.followings?.filter((user) => {
+                                return user._id !== action.payload.user._id
+                        })
+
+                        state.myProfile.followers = state.myProfile.followers?.filter((user) => {
+                                return user._id !== action.payload.user._id
+                        })
+
 
                 })
                 .addCase(acceptFollowRequest.fulfilled, (state, action) => {
@@ -229,4 +277,25 @@ const appConfigSlice = createSlice({
 
 export default appConfigSlice.reducer
 
-export const {setSocket,setOnlineUsers, setLoading, setToastData, setIsLoggedIn, setMyProfileEmpty, setMyFollowSuggestionEmpty,connectSocket,disconnectSocket,subscribeToFollowRequest,unsubscribeToFollowRequest,addFollowRequest} = appConfigSlice.actions
+export const {
+        setSocket,
+        setOnlineUsers, 
+        setLoading, 
+        setToastData, 
+        setIsLoggedIn, 
+        setMyProfileEmpty, 
+        setMyFollowSuggestionEmpty,
+        connectSocket,
+        disconnectSocket,
+        subscribeToFollowRequest,
+        unsubscribeToFollowRequest,
+        addFollowRequest,
+        acceptFollowRequestSubscribe,
+        acceptFollowRequestUnsubscribe,
+        rejectFollowRequestSubscribe,
+        rejectFollowRequestUnsubscribe,
+        followRejectUser,
+        subscribeToUnfollowRequest,
+        unsubscribeToUnfollowRequest,
+        handleUnfollowState
+} = appConfigSlice.actions

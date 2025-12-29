@@ -113,7 +113,10 @@ function ShowImagePost({post,showFeed}) {
                         </div>
                         <div className='commentIcon'>
                                 <FaRegCommentAlt className='icon' onClick={handleOpen} />
-                                <span className='commentCount'>{post?.comment?.length ? userPostComments?.length : "No Comments"}</span>
+                                <span className='commentCount'>
+                                        {post?.comment?.length ? post?.comment?.length : "No Comments"}
+                                       
+                                        </span>
                                 <CommentBox open={open} handleClose={handleClose} post={post} showFeed={showFeed} />
                         </div>
                 </div>

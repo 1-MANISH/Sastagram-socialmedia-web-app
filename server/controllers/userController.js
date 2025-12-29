@@ -4,7 +4,7 @@ const User = require("../models/User");
 const ta = require("time-ago")
 const { successResponse, errorResponse } = require("../utils/responseWrapper");
 const {io,getReceiverSocketId} = require("../socket.js");
-const { FOLLOW_REQUEST } = require("../utils/events.js");
+const { FOLLOW_REQUEST, ACCEPT_REQUEST, REJECT_REQUEST, UNFOLLOW_REQUEST } = require("../utils/events.js");
 
 // =====> /api/deleteProfile
 const deleteUserProfileController = async (req,res) => {
@@ -200,6 +200,10 @@ const rejectRequestController = async (req,res) => {
          await userToRejectFollowRequest.save()
 
         // TODO:socket
+         const receiverSocketId = getReceiverSocketId(userToRejectFollowRequest._id.toString())
+        if(receiverSocketId){
+                io.to(receiverSocketId).emit(REJECT_REQUEST,currentUser)
+        }
 
          return res.send(successResponse(200,{requestStatus:"Request Rejected 💣"}))
         
@@ -261,6 +265,12 @@ const acceptRequestController = async (req,res) => {
         await userToAcceptFollowRequest.save()
 
         // TODO:socket
+
+        const receiverSocketId = getReceiverSocketId(userToAcceptFollowRequest._id.toString())
+
+        if(receiverSocketId){
+                        io.to(receiverSocketId).emit(ACCEPT_REQUEST,currentUser)
+        }
 
         //ACK
         return res.send(successResponse(200,{requestStatus:"Request Accepted 🎉"}))
@@ -386,6 +396,10 @@ const unFollowUserController = async (req,res) => {
         await userToUnFollow.save()
 
         // TODO:socket
+         const receiverSocketId = getReceiverSocketId(userToUnFollow._id.toString())
+        if(receiverSocketId){
+                io.to(receiverSocketId).emit(UNFOLLOW_REQUEST,currentUser)
+        }
 
         return res.send(successResponse(200,"Unfollow the user 🎭"))
         

@@ -3,10 +3,12 @@
     .container{
         margin-top: 100px;
         display: flex;
+        gap: 4px;
 
 
         .notificationLeftPanel{
-            flex: 3;
+         background-color: rgb(245, 246, 246);
+            flex: 2;
             display: flex;
             flex-direction: column;
 
@@ -34,6 +36,54 @@
                 }
             }
 
+        }
+        .middlePanel{
+                background-color: rgb(245, 246, 246);
+                flex: 3;
+                display: flex;
+                justify-content: space-between;
+                 
+                 .followers{
+                        display: flex;
+                        flex-direction: column;
+                        border-right: 1px solid var(--border-color);
+                        flex: 1;
+                        .fHeading{
+                                font-family: monospace;
+                                font-weight: 800;
+                                font-size: 1.1rem;
+                                margin-bottom: 10px;
+                        }
+                        .followList{
+                                display: flex;
+                                flex-direction: column;
+                                gap: 10px;
+                                max-height: 80vh;
+                                overflow: scroll;
+                                scrollbar-width: none;
+                                width: 100%;
+                        }
+                }
+                 .followings{
+                        display: flex;
+                        flex-direction: column;
+                              flex: 1;
+
+                        .fHeading{
+                                font-family: monospace;
+                                font-weight: 800;
+                                font-size: 1.1rem;
+                                margin-bottom: 10px;
+                        }
+                        .followingList{
+                                display: flex;
+                                flex-direction: column;
+                                gap: 10px;
+                                max-height: 80vh;
+                                overflow: scroll;
+                                scrollbar-width: none;
+                        }
+                }
         }
 
         .notificationRightPanel{

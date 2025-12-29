@@ -47,13 +47,14 @@ export const likeOrDisLikeUserPost = createAsyncThunk(
 
 export const commentOnPost = createAsyncThunk(
     "post/CommentOnPost",
-    async(body,{getState})=>{
+    async(body,{getState,dispatch})=>{
             try {
 
                 const response = await axiosClient.post(`/api/post/commentOnPost/id=${body.postId}`,{message:body.message})
                 const {myProfile} = getState()?.appConfigReducer
                 response.body = body
                 response.currentUser=myProfile
+
                 return response
             } catch (error) {
 
@@ -106,6 +107,11 @@ const postSlice = createSlice({
                 },
                 addAComment:(state,action)=>{
                         state.postComments.splice(0,0,action.payload)
+                        
+                        // const index = state.userProfile.postCreated.findIndex((post)=>{
+                        //         return post._id === action.payload.postId
+                        // })
+                        // state.userProfile.postCreated[index].comment.splice(0,0,action.payload)
                 }
         },
         extraReducers: function (builder) {
@@ -155,7 +161,7 @@ const postSlice = createSlice({
                         const index = state.userProfile.postCreated.findIndex((post)=>post._id === postId)
                       
                         if(index!==-1){
-                                state.userProfile.postCreated[index].comment.concat({message:message,commentBy:action.payload.currentUser,commentedAt:Date.now()})
+                                state.userProfile.postCreated[index].comment.splice(0,0,{message:message,commentBy:action.payload.currentUser,commentedAt:Date.now()})
                         }
                        
                         // also in post comments- add
