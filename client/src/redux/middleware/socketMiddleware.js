@@ -1,6 +1,10 @@
-import { ACCEPT_REQUEST, FOLLOW_REQUEST, GET_ONLINE_USERS, REJECT_REQUEST,UNFOLLOW_REQUEST } from "../../utils/events"
+import { ACCEPT_REQUEST, FOLLOW_REQUEST, GET_ONLINE_USERS, POST_COMMENT, POST_CREATED, POST_LIKED_STATUS, REJECT_REQUEST,UNFOLLOW_REQUEST } from "../../utils/events"
 import { acceptFollowRequestSubscribe, acceptFollowRequestUnsubscribe, addFollowRequest, connectSocket, disconnectSocket, followRejectUser, getMyProfile, handleUnfollowState, rejectFollowRequestSubscribe, rejectFollowRequestUnsubscribe, setOnlineUsers, setSocket, subscribeToFollowRequest, subscribeToUnfollowRequest, unsubscribeToFollowRequest, unsubscribeToUnfollowRequest } from "../slices/appConfigSlice"
 import {io} from "socket.io-client";
+import { addLikeUpdateToPost, subscribeToLikeDislikePost, subscribeToPostComment, unsubscribeToLikeDislikePost, unsubscribeToPostComment, updateLiveComment ,subscribeToPostCreated,
+        unsubscribeToPostCreated,
+        addLivePostCreated} from "../slices/feedSlice";
+import { addLikeUpdateToUserPost, addLiveUserPostCreated, updateLiveUserComment } from "../slices/postSlice";
 
 // async operations
 
@@ -171,6 +175,89 @@ export const socketMiddleware  = (store )=> (next)=>(action)=>{
                                 socket.off(REJECT_REQUEST)
                 }catch(error){
                         console.log(`Error unsubscribing from followRequest reject: ${error}`)
+                }
+        }
+        if(action.type === subscribeToLikeDislikePost.type){
+                try{
+                        // listen to any upcoming follow request for this user
+                        const myUserId = state.myProfile?._id
+
+                        if(!socket || !myUserId) return
+
+                        socket.on(POST_LIKED_STATUS,({post,userId,status})=>{
+
+
+                                 if(userId === myUserId)return
+
+                                store.dispatch(addLikeUpdateToPost({post,status,userId})) 
+                                store.dispatch(addLikeUpdateToUserPost({post,status,userId}))
+                         })
+
+                } catch(error){
+                        console.log(`Error subscribing from likeDislike: ${error}`)
+                 } 
+        }
+        if(action.type === unsubscribeToLikeDislikePost.type){
+                  try{
+                        if(!socket) return
+                                socket.off(POST_LIKED_STATUS)
+                }catch(error){
+                        console.log(`Error unsubscribing from likeDislike: ${error}`)
+                }
+        }
+        if(action.type === subscribeToPostComment.type){
+                try{
+                        // listen to any upcoming follow request for this user
+                        const myUserId = state.myProfile?._id
+
+                        if(!socket || !myUserId) return
+
+                        socket.on(POST_COMMENT,({postId,comment,userId})=>{
+                                 if(userId === myUserId)return
+
+                                store.dispatch(updateLiveComment({postId,comment,userId})) 
+                                store.dispatch(updateLiveUserComment({postId,comment,userId}))
+                         })
+
+                } catch(error){
+                        console.log(`Error subscribing from comment: ${error}`)
+                 } 
+        }
+        if(action.type === unsubscribeToPostComment.type){
+                  try{
+                        if(!socket) return
+                                socket.off(POST_COMMENT)
+                }catch(error){
+                        console.log(`Error unsubscribing from comment: ${error}`)
+                }
+        }
+
+        if(action.type === subscribeToPostCreated.type){
+                try{
+                        // listen to any upcoming follow request for this user
+                        const myUserId = state.myProfile?._id
+
+                        if(!socket || !myUserId) return
+
+                        socket.on(POST_CREATED,({post,userId})=>{
+
+                                if(userId === myUserId)return
+
+
+                                store.dispatch(addLivePostCreated({post,userId})) 
+                                store.dispatch(addLiveUserPostCreated({post,userId}))
+                         })
+
+                } catch(error){
+                        console.log(`Error subscribing from comment: ${error}`)
+                 } 
+        }
+        if(action.type === unsubscribeToPostCreated.type){
+                  try{
+                        if(!socket) return
+                                socket.off(POST_CREATED)
+                }catch(error){
+                        console.log(`Error unsubscribing from comment: ${error}`)
                 }
         }
         return next(action)

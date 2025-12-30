@@ -4,6 +4,7 @@ import { Outlet, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserProfile } from '../../redux/slices/postSlice'
 import UserDetailBox from '../userDetailsBox/UserDetailBox'
+import { subscribeToLikeDislikePost, subscribeToPostComment, subscribeToPostCreated, unsubscribeToLikeDislikePost, unsubscribeToPostComment, unsubscribeToPostCreated } from '../../redux/slices/feedSlice'
 
 function UserProfile() {
 
@@ -20,6 +21,18 @@ function UserProfile() {
                 dispatch(getUserProfile(param.userId))
                 setIsLoggedInUser(userProfile._id === currentUserProfile?._id)
         },[param.userId,userProfile._id,currentUserProfile._id])
+
+        useEffect(()=>{
+                        dispatch(subscribeToLikeDislikePost())
+                        dispatch(subscribeToPostComment())
+                        dispatch(subscribeToPostCreated())
+        
+                        return ()=> {
+                                dispatch(unsubscribeToLikeDislikePost())
+                                dispatch(unsubscribeToPostComment())
+                                dispatch(unsubscribeToPostCreated())
+                        }
+        },[subscribeToLikeDislikePost,unsubscribeToLikeDislikePost,subscribeToPostComment,unsubscribeToPostComment,subscribeToPostCreated,unsubscribeToPostCreated])
 
 
 

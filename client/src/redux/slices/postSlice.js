@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { axiosClient } from "../../utils/axiosClient";
-
+import { toast } from 'react-hot-toast'
 
 
 
@@ -21,10 +21,10 @@ export const createPost = createAsyncThunk(
     async (body) => {
         try {
             const response = await axiosClient.post("/api/post/createPost", body.body)
-
+        toast.success("Post created successfully")
             return response.result
         } catch (error) {
-
+                toast.error(`Error in post creation `)
             return Promise.reject(error)
         }
     }
@@ -108,10 +108,40 @@ const postSlice = createSlice({
                 addAComment:(state,action)=>{
                         state.postComments.splice(0,0,action.payload)
                         
-                        // const index = state.userProfile.postCreated.findIndex((post)=>{
-                        //         return post._id === action.payload.postId
-                        // })
-                        // state.userProfile.postCreated[index].comment.splice(0,0,action.payload)
+                },
+                addLikeUpdateToUserPost:(state,action)=>{
+                        const {post,status,userId} = action.payload
+                        
+                        if(!state.userProfile.postCreated){return}
+                        const index = state.userProfile?.postCreated?.findIndex((feed)=>feed._id === post._id)
+                        if(index!==-1 && state.userProfile.postCreated.length){
+                                if(status){
+                                        // post liked
+                                        state.userProfile.postCreated[index].likedBy.push(userId)
+                                       
+                                }else{
+                                        // post disliked
+                                        state.userProfile.postCreated[index].likedBy = state.userProfile.postCreated[index].likedBy.filter((id)=>id!==userId)
+                                        
+                                }
+                        }            
+                },
+                 updateLiveUserComment:(state,action)=>{
+                        const {postId,comment,userId} = action.payload
+                         if(!state.userProfile.postCreated){return}
+                          const index = state.userProfile?.postCreated?.findIndex((feed)=>feed._id === postId)
+
+                        if(index!==-1){
+                                state.userProfile.postCreated[index].comment.splice(0,0,comment)
+                        }
+                        state.postComments.splice(0,0,comment)
+            
+
+                },
+                 addLiveUserPostCreated:(state,action)=>{
+                        if(!state.userProfile.postCreated){return}
+                        const {post} = action.payload
+                        state.userProfile.postCreated.splice(0,0,post)
                 }
         },
         extraReducers: function (builder) {
@@ -166,8 +196,8 @@ const postSlice = createSlice({
                        
                         // also in post comments- add
                         state.postComments.splice(0,0,{commentBy:action.payload.currentUser,message:message,commentedAt:Date.now()})
-                        console.log(12,state.postComments.length);
-                        
+
+
                         
                 })
                 .addCase(getPostComment.fulfilled,(state,action)=>{
@@ -180,4 +210,10 @@ const postSlice = createSlice({
 
 export default postSlice.reducer
 
-export const { setUserProfileEmpty,addAComment } = postSlice.actions
+export const { 
+        setUserProfileEmpty,
+        addAComment,
+        addLikeUpdateToUserPost,
+        updateLiveUserComment,
+        addLiveUserPostCreated
+} = postSlice.actions

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux'
 import { getMyFollowSuggestion,  } from '../../redux/slices/appConfigSlice'
 import "./Feed.scss"
 import { IoCreate } from "react-icons/io5";
-import { getFeedData } from '../../redux/slices/feedSlice'
+import { getFeedData, subscribeToLikeDislikePost, subscribeToPostComment, subscribeToPostCreated, unsubscribeToLikeDislikePost, unsubscribeToPostComment, unsubscribeToPostCreated } from '../../redux/slices/feedSlice'
 
 function Feed() {
         const navigate = useNavigate()
@@ -17,6 +17,18 @@ function Feed() {
                 dispatch(getMyFollowSuggestion())
                 dispatch(getFeedData())
         }, [dispatch])
+
+        useEffect(()=>{
+                dispatch(subscribeToLikeDislikePost())
+                dispatch(subscribeToPostComment())
+                dispatch(subscribeToPostCreated())
+
+                return ()=>{
+                         dispatch(unsubscribeToLikeDislikePost())
+                         dispatch(unsubscribeToPostComment())
+                         dispatch(unsubscribeToPostCreated())
+                }
+        },[subscribeToLikeDislikePost,unsubscribeToLikeDislikePost,subscribeToPostComment,unsubscribeToPostComment,subscribeToPostCreated,unsubscribeToPostCreated])
 
 
         return (

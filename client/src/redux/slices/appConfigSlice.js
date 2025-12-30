@@ -133,7 +133,6 @@ const appConfigSlice = createSlice({
                         state.myFollowSuggestions = []
                 },
                  setOnlineUsers:(state,action)=>{
-                        console.log(1221212,action.payload)
                         state.onlineUsers = action.payload
                 },
                 setSocket:(state,action)=>{
@@ -171,7 +170,6 @@ const appConfigSlice = createSlice({
                 },
                 followRejectUser:(state,action)=>{
                         const {userFR,type} = action.payload
-                        console.log(userFR,type)
                         switch(type){
                                 case "FOLLOW REQUEST REJECTED":
                                         state.myProfile.followingRequest = state.myProfile.followingRequest.filter((user) => user._id !== userFR._id)

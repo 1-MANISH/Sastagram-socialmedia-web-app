@@ -28,7 +28,7 @@ export const commentOnPostForFeedPost = createAsyncThunk(
             }))
             return response
         } catch (error) {
-                console.log("ERROR ME",error)
+
             return Promise.reject(error)
         }
     }
@@ -57,6 +57,51 @@ const feedSlice = createSlice({
         reducers:{
                 setFeedDataEmpty:(state,action)=>{
                         state.feedData=[]
+                },
+                subscribeToLikeDislikePost:(state,action)=>{
+
+                },
+                unsubscribeToLikeDislikePost:(state,action)=>{
+                        
+                },
+                addLikeUpdateToPost:(state,action)=>{
+                        const {post,status,userId} = action.payload
+
+                        const index = state.feedData.findIndex((feed)=>feed._id === post._id)
+                        if(index!==-1){
+                                 if(status){
+                                        // post liked
+                                        state.feedData[index].likedBy.push(userId)
+                                }else{
+                                        // post disliked
+                                        state.feedData[index].likedBy = state.feedData[index].likedBy.filter((id)=>id!==userId)
+                                }
+                        }
+                       
+                },
+                subscribeToPostComment:(state,action)=>{
+
+                },
+                unsubscribeToPostComment:(state,action)=>{
+                        
+                },
+                updateLiveComment:(state,action)=>{
+                        const {postId,comment,userId} = action.payload
+
+                        const index = state.feedData.findIndex((feed)=>feed._id === postId)
+                        if(index!==-1){
+                                state.feedData[index].comment.splice(0,0,comment)
+                        }
+                },
+                subscribeToPostCreated:(state,action)=>{
+
+                },
+                unsubscribeToPostCreated:(state,action)=>{
+                        
+                },
+                addLivePostCreated:(state,action)=>{
+                        const {post} = action.payload
+                        state.feedData.splice(0,0,post)
                 }
         },
         extraReducers:function(builder){
@@ -106,5 +151,17 @@ const feedSlice = createSlice({
 
 export default feedSlice.reducer
 
-export const {setFeedDataEmpty} = feedSlice.actions
+export const {
+        setFeedDataEmpty,
+        subscribeToLikeDislikePost,
+        unsubscribeToLikeDislikePost,
+        addLikeUpdateToPost,
+        subscribeToPostComment,
+        unsubscribeToPostComment,
+        updateLiveComment,
+        subscribeToPostCreated,
+        unsubscribeToPostCreated,
+        addLivePostCreated
+
+} = feedSlice.actions
 
