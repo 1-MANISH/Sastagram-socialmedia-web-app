@@ -3,7 +3,8 @@ const Post = require("../models/Post");
 const User = require("../models/User");
 const ta = require("time-ago")
 const { errorResponse, successResponse } = require("../utils/responseWrapper")
-
+const {io} = require("../socket.js");
+const { POST_LIKED_STATUS, POST_COMMENT ,POST_CREATED} = require("../utils/events.js");
 
 // ====> /api/post/getPostComment/id=hwud8w77ww
 const getPostCommentController = async (req,res) => {
@@ -114,6 +115,12 @@ const likeOrUnlikePostController = async (req,res) => {
         await postToLike.save()
 
         // TODO:socket
+        io.emit(POST_LIKED_STATUS,{
+                post:postToLike,
+                userId:currentUserId,
+                status:status==="POST LIKED 💖"?true:false
+        })
+        
 
         return res.send(successResponse(200,{postLikeStatus:status}))
 
@@ -162,6 +169,15 @@ const commentOnPostController = async (req,res) =>{
         await postToComment.save()
 
         // TODO:Socket
+        io.emit(POST_COMMENT,{
+                postId:postToComment._id,
+                comment:{
+                        commentBy:req.user,
+                        message,
+                        commentedAt:new Date()
+                },
+                userId:currentUserId
+        })
 
         return res.send(successResponse(200,"Message sent 🎇"))
 
@@ -226,6 +242,10 @@ const createPostController = async (req,res) => {
         await currentUser.save()
 
         // TODO:SOCKET
+        io.emit(POST_CREATED,{
+                post:postCreated,
+                userId:currentUserId
+        })
 
         return res.send(successResponse(201,{postCreated}))
         

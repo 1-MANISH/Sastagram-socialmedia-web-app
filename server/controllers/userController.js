@@ -521,7 +521,7 @@ const getUserPostController = async(req,res)=>{
         // 3. Now find this user posts
         const posts = await Post.find({createdBy:userId}).populate("postCreated")
         
-        // ACK
+   
 
         return res.send(successResponse(200,{posts}))
 
@@ -653,6 +653,9 @@ const getUserProfileController = async(req,res)=>{
         if(!user){
             return res.send(errorResponse(404,"User not found 😅"))
         }
+
+             // ACK
+
 
         // ACK
         return res.send(successResponse(200,{user}))
