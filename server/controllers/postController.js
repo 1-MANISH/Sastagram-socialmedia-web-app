@@ -240,6 +240,7 @@ const createPostController = async (req,res) => {
         // 5. make entry of this post to current user schema
         currentUser.postCreated.push(postCreated._id)
         await currentUser.save()
+        postCreated.createdBy = currentUser
 
         // TODO:SOCKET
         io.emit(POST_CREATED,{
