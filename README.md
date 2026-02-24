@@ -53,17 +53,29 @@ Real-Time:
 ## Project Structure
 
 SnapFlow/
+
 ├── client/
+
 │   ├── public/
+
 │   ├── src/
+
 │   │   ├── assets/
+
 │   │   ├── components/
+
 │   │   ├── pages/
+
 │   │   ├── redux/
+
 │   │   ├── utils/
+
 │   │   ├── App.js
+
 │   │   ├── App.scss
+
 │   │   ├── index.js
+
 │   │   └── index.scss
 │
 ├── server/
