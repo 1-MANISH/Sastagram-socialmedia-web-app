@@ -50,33 +50,24 @@ Backend:
 Real-Time:
 - Socket.IO
 
-## Project Structure
-
 SnapFlow/
 
 ├── client/
-
 │   ├── public/
-
 │   ├── src/
-
 │   │   ├── assets/
-
 │   │   ├── components/
-
 │   │   ├── pages/
-
 │   │   ├── redux/
-
 │   │   ├── utils/
-
 │   │   ├── App.js
-
 │   │   ├── App.scss
-
 │   │   ├── index.js
-
 │   │   └── index.scss
+│   │
+│   ├── .gitignore
+│   ├── package.json
+│   └── README.md
 │
 ├── server/
 │   ├── controllers/
@@ -87,6 +78,8 @@ SnapFlow/
 │   ├── dbConnect.js
 │   ├── index.js
 │   └── package.json
+│
+└── .gitignore
 
 ## Installation
 
